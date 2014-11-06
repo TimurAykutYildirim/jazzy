@@ -5,6 +5,7 @@ require 'uri'
 require 'jazzy/config'
 require 'jazzy/doc'
 require 'jazzy/jazzy_markdown'
+require 'jazzy/readme_generator'
 require 'jazzy/source_declaration'
 require 'jazzy/sourcekitten'
 
@@ -100,14 +101,11 @@ module Jazzy
     #        child names and URLs. @see doc_structure_for_docs
     def self.document(options, doc_model, path_to_root, doc_structure)
       doc = Doc.new # Mustache model instance
+
       # Do something special for index.
-      # @todo render README here
       if doc_model.name == 'index'
         doc[:name] = options.module_name
-        doc[:overview] = Jazzy.markdown.render(
-          "This is the index page for #{options.module_name} docs. " \
-          'Navigate using the links on the left.',
-        )
+        doc[:overview] = ReadmeGenerator.generate(options)
         doc[:structure] = doc_structure
         doc[:module_name] = options.module_name
         doc[:author_name] = options.author_name
